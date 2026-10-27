@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Switch Board Generator</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; background: #f4f5f6; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { margin-top: 0; color: #111; font-size: 1.4rem; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        .switch-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .switch-item:last-child { border-bottom: none; }
+        .switch-label { font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+        .delete-btn { color: #ff4d4d; background: none; border: none; padding: 0 5px; cursor: pointer; font-size: 1.2rem; }
+        .delete-btn:hover { color: #cc0000; }
+        /* Switch UI styling */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .share-box { background: #e9ecef; padding: 12px; border-radius: 6px; font-size: 0.9rem; word-break: break-all; margin-top: 15px; border: 1px solid #ddd; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🛠️ Setup Your Switches</h2>
+        <div class="input-group">
+            <input type="text" id="switchName" placeholder="Name your toggle...">
+            <button onclick="addSwitch()">Add</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="boardCard">
+        <h2>🎛️ Your Switch Board</h2>
+        <div id="switchContainer"></div>
+        
+        <div style="margin-top: 25px;">
+            <button onclick="copyURL()" style="background: #28a745; width: 100%;">📋 Copy Shareable URL</button>
+            <div class="share-box" id="urlDisplay">URL will update automatically...</div>
+        </div>
+    </div>
+
+    <script>
+        let switches = [];
+
+        // Load data from URL if it exists
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const dataParam = params.get('s');
+            if (dataParam) {
+                try {
+                    // format: name1:1,name2:0
+                    switches = dataParam.split(',').map(item => {
+                        const [name, state] = item.split(':');
+                        return { name: decodeURIComponent(name), encodeURIComponent, state: state === '1' };
+                    });
+                    render();
+                } catch(e) {
+                    console.error("Error parsing URL parameters", e);
+                }
+            }
+        }
+
+        function updateURL() {
+            if (switches.length === 0) {
+                window.history.replaceState({}, '', window.location.pathname);
+                document.getElementById('boardCard').classList.add('hidden');
+                return;
+            }
+            document.getElementById('boardCard').classList.remove('hidden');
+            const dataString = switches.map(s => `${encodeURIComponent(s.name)}:${s.state ? '1' : '0'}`).join(',');
+            const newUrl = `${window.location.origin}${window.location.pathname}?s=${dataString}`;
+            window.history.replaceState({}, '', newUrl);
+            document.getElementById('urlDisplay').innerText = newUrl;
+        }
+
+        function addSwitch() {
+            const input = document.getElementById('switchName');
+            const name = input.value.trim();
+            if (name) {
+                switches.push({ name: name, state: false });
+                input.value = '';
+                render();
+            }
+        }
+
+        function toggleSwitch(index) {
+            switches[index].state = !switches[index].state;
+            updateURL();
+        }
+
+        function deleteSwitch(index) {
+            switches.splice(index, 1);
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('switchContainer');
+            container.innerHTML = '';
+            switches.forEach((s, index) => {
+                const item = document.createElement('div');
+                item.className = 'switch-item';
+                item.innerHTML = `
+                    <div class="switch-label">
+                        <button class="delete-btn" onclick="deleteSwitch(${index})">×</button>
+                        <span>${s.name}</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" ${s.state ? 'checked' : ''} onchange="toggleSwitch(${index})">
+                        <span class="slider"></span>
+                    </label>
+                `;
+                container.appendChild(item);
+            });
+            updateURL();
+        }
+
+        function copyURL() {
+            const urlText = document.getElementById('urlDisplay').innerText;
+            navigator.clipboard.writeText(urlText);
+            alert('Link copied to clipboard! Share it with anyone.');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
