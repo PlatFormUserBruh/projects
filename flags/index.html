@@ -5,14 +5,281 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>URL Switch Board</title>
   <style>
+    :root {
+      --page-bg: #f4f5f6;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --heading-color: #111111;
+      --muted-text: #666666;
+      --border-color: #d9d9d9;
+      --soft-bg: #e9ecef;
+      --primary: #007bff;
+      --primary-hover: #0056b3;
+      --success: #28a745;
+      --toggle-off: #cccccc;
+      --toggle-on: #28a745;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --share-bg: #e9ecef;
+      --danger: #ff4d4d;
+      --danger-hover: #cc0000;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       max-width: 550px;
       margin: 40px auto;
       padding: 20px;
-      background: #f4f5f6;
-      color: #333;
+      background: var(--page-bg);
+      color: var(--text-color);
       position: relative;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    body[data-theme="Black"] {
+      --page-bg: #111111;
+      --card-bg: #1c1c1c;
+      --text-color: #f0f0f0;
+      --heading-color: #ffffff;
+      --muted-text: #d0d0d0;
+      --border-color: #3a3a3a;
+      --soft-bg: #222222;
+      --primary: #3d8bfd;
+      --primary-hover: #2d6fe8;
+      --success: #2ecc71;
+      --toggle-off: #666666;
+      --toggle-on: #2ecc71;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --share-bg: #2a2a2a;
+      --danger: #ff6b6b;
+      --danger-hover: #ff3b3b;
+    }
+
+    body[data-theme="Blue"] {
+      --page-bg: #edf6ff;
+      --card-bg: #ffffff;
+      --text-color: #1d3557;
+      --heading-color: #113a66;
+      --muted-text: #4d6786;
+      --border-color: #bfd6f2;
+      --soft-bg: #dfeeff;
+      --primary: #0d6efd;
+      --primary-hover: #0b5ed7;
+      --success: #198754;
+      --toggle-off: #b9cfe9;
+      --toggle-on: #198754;
+      --shadow: rgba(13, 110, 253, 0.08);
+      --share-bg: #dfeeff;
+      --danger: #ef4444;
+      --danger-hover: #c82333;
+    }
+
+    body[data-theme="Dark Blue"] {
+      --page-bg: #071a2d;
+      --card-bg: #0f243d;
+      --text-color: #edf6ff;
+      --heading-color: #ffffff;
+      --muted-text: #c2d9f5;
+      --border-color: #21456d;
+      --soft-bg: #132d49;
+      --primary: #2d7ff9;
+      --primary-hover: #1e63d7;
+      --success: #2ec27e;
+      --toggle-off: #45658e;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #132d49;
+      --danger: #ff6b6b;
+      --danger-hover: #f04343;
+    }
+
+    body[data-theme="Red"] {
+      --page-bg: #fff3f3;
+      --card-bg: #ffffff;
+      --text-color: #3a1f1f;
+      --heading-color: #521818;
+      --muted-text: #7a4c4c;
+      --border-color: #f0b4b4;
+      --soft-bg: #fde9e9;
+      --primary: #dc3545;
+      --primary-hover: #bb2d3b;
+      --success: #198754;
+      --toggle-off: #ecc0c0;
+      --toggle-on: #198754;
+      --shadow: rgba(220, 53, 69, 0.08);
+      --share-bg: #fde9e9;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+    }
+
+    body[data-theme="Dark Red"] {
+      --page-bg: #2a0f12;
+      --card-bg: #3a171a;
+      --text-color: #ffe8ea;
+      --heading-color: #ffffff;
+      --muted-text: #f2c7cd;
+      --border-color: #6e2b35;
+      --soft-bg: #4c1d24;
+      --primary: #ef4444;
+      --primary-hover: #dc2626;
+      --success: #2ec27e;
+      --toggle-off: #7a3d45;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #4c1d24;
+      --danger: #ff7b7b;
+      --danger-hover: #ff4d4d;
+    }
+
+    body[data-theme="Green"] {
+      --page-bg: #f1fff5;
+      --card-bg: #ffffff;
+      --text-color: #1d2e24;
+      --heading-color: #173b2c;
+      --muted-text: #4f6f60;
+      --border-color: #c8e8d6;
+      --soft-bg: #e3f9eb;
+      --primary: #198754;
+      --primary-hover: #146c43;
+      --success: #198754;
+      --toggle-off: #d2e7d8;
+      --toggle-on: #198754;
+      --shadow: rgba(25, 135, 84, 0.08);
+      --share-bg: #e3f9eb;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+    }
+
+    body[data-theme="Dark Green"] {
+      --page-bg: #0d1f18;
+      --card-bg: #153529;
+      --text-color: #ecfff5;
+      --heading-color: #ffffff;
+      --muted-text: #cfeadf;
+      --border-color: #2d5a4a;
+      --soft-bg: #1d3e33;
+      --primary: #2ec27e;
+      --primary-hover: #20a868;
+      --success: #2ec27e;
+      --toggle-off: #3d6659;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #1d3e33;
+      --danger: #ff7b7b;
+      --danger-hover: #ff4d4d;
+    }
+
+    body[data-theme="Yellow"] {
+      --page-bg: #fffdf2;
+      --card-bg: #ffffff;
+      --text-color: #3e3a2a;
+      --heading-color: #413a15;
+      --muted-text: #736941;
+      --border-color: #f3de9a;
+      --soft-bg: #fff0bf;
+      --primary: #ffc107;
+      --primary-hover: #d39e00;
+      --success: #198754;
+      --toggle-off: #e7d69a;
+      --toggle-on: #198754;
+      --shadow: rgba(255, 193, 7, 0.08);
+      --share-bg: #fff0bf;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+    }
+
+    body[data-theme="Dark Yellow"] {
+      --page-bg: #261d07;
+      --card-bg: #342b10;
+      --text-color: #fff9d8;
+      --heading-color: #ffffff;
+      --muted-text: #efe0a8;
+      --border-color: #66572d;
+      --soft-bg: #433712;
+      --primary: #facc15;
+      --primary-hover: #eab308;
+      --success: #2ec27e;
+      --toggle-off: #6d5c27;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #433712;
+      --danger: #ff7b7b;
+      --danger-hover: #ff4d4d;
+    }
+
+    body[data-theme="Purple"] {
+      --page-bg: #f7f3ff;
+      --card-bg: #ffffff;
+      --text-color: #2d243d;
+      --heading-color: #2b1a4a;
+      --muted-text: #66587d;
+      --border-color: #dccaf7;
+      --soft-bg: #f0e7ff;
+      --primary: #6f42c1;
+      --primary-hover: #5a35a0;
+      --success: #198754;
+      --toggle-off: #d9cdf8;
+      --toggle-on: #198754;
+      --shadow: rgba(111, 66, 193, 0.08);
+      --share-bg: #f0e7ff;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+    }
+
+    body[data-theme="Dark Purple"] {
+      --page-bg: #170f25;
+      --card-bg: #211a34;
+      --text-color: #f3ebff;
+      --heading-color: #ffffff;
+      --muted-text: #d4c4f5;
+      --border-color: #4c3f69;
+      --soft-bg: #2d2340;
+      --primary: #a855f7;
+      --primary-hover: #9333ea;
+      --success: #2ec27e;
+      --toggle-off: #573f72;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #2d2340;
+      --danger: #ff7b7b;
+      --danger-hover: #ff4d4d;
+    }
+
+    body[data-theme="Pink"] {
+      --page-bg: #fff3fb;
+      --card-bg: #ffffff;
+      --text-color: #3f2135;
+      --heading-color: #4a173d;
+      --muted-text: #7a5470;
+      --border-color: #f7c9e6;
+      --soft-bg: #ffe3f2;
+      --primary: #e83e8c;
+      --primary-hover: #d62d7a;
+      --success: #198754;
+      --toggle-off: #f4cde6;
+      --toggle-on: #198754;
+      --shadow: rgba(232, 62, 140, 0.08);
+      --share-bg: #ffe3f2;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+    }
+
+    body[data-theme="Dark Pink"] {
+      --page-bg: #2a1220;
+      --card-bg: #3b182b;
+      --text-color: #ffeaf7;
+      --heading-color: #ffffff;
+      --muted-text: #f3c4dc;
+      --border-color: #6e3659;
+      --soft-bg: #4f1f39;
+      --primary: #f472b6;
+      --primary-hover: #ec4899;
+      --success: #2ec27e;
+      --toggle-off: #72435d;
+      --toggle-on: #2ec27e;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --share-bg: #4f1f39;
+      --danger: #ff7b7b;
+      --danger-hover: #ff4d4d;
     }
 
     #settingsTrigger {
@@ -25,6 +292,7 @@
       user-select: none;
       z-index: 1000;
       transition: opacity 0.2s;
+      color: var(--text-color);
     }
 
     #settingsTrigger:hover {
@@ -32,22 +300,24 @@
     }
 
     .card {
-      background: white;
+      background: var(--card-bg);
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 15px var(--shadow);
       margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
 
     h2 {
       margin-top: 0;
-      color: #111;
+      color: var(--heading-color);
       font-size: 1.4rem;
     }
 
     .edit-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.6fr 1fr 1fr;
       gap: 15px;
       margin-bottom: 15px;
     }
@@ -61,7 +331,7 @@
     .edit-control label {
       font-size: 0.85rem;
       font-weight: bold;
-      color: #666;
+      color: var(--muted-text);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -73,17 +343,20 @@
       align-items: flex-end;
     }
 
-    input[type="text"] {
+    input[type="text"], select {
       width: 100%;
       padding: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-color);
       border-radius: 6px;
       font-size: 1rem;
       box-sizing: border-box;
+      background: var(--card-bg);
+      color: var(--text-color);
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
 
     button {
-      background: #007bff;
+      background: var(--primary);
       color: white;
       border: none;
       padding: 10px 15px;
@@ -92,10 +365,11 @@
       cursor: pointer;
       font-weight: bold;
       white-space: nowrap;
+      transition: background 0.2s ease;
     }
 
     button:hover {
-      background: #0056b3;
+      background: var(--primary-hover);
     }
 
     .switch-item {
@@ -103,7 +377,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 0;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .switch-item:last-child {
@@ -119,10 +393,11 @@
       flex: 1;
       min-width: 0;
       overflow-wrap: anywhere;
+      color: var(--text-color);
     }
 
     .delete-btn {
-      color: #ff4d4d;
+      color: var(--danger);
       background: none;
       border: none;
       padding: 0 5px;
@@ -132,7 +407,7 @@
     }
 
     .delete-btn:hover {
-      color: #cc0000;
+      color: var(--danger-hover);
     }
 
     .admin-mode .delete-btn {
@@ -160,7 +435,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
+      background-color: var(--toggle-off);
       transition: 0.3s;
       border-radius: 34px;
     }
@@ -178,7 +453,7 @@
     }
 
     input:checked + .slider {
-      background-color: #28a745;
+      background-color: var(--toggle-on);
     }
 
     input:checked + .slider:before {
@@ -186,13 +461,14 @@
     }
 
     .share-box {
-      background: #e9ecef;
+      background: var(--share-bg);
       padding: 12px;
       border-radius: 6px;
       font-size: 0.9rem;
       word-break: break-all;
       margin-top: 15px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
     }
 
     .hidden {
@@ -204,12 +480,32 @@
   <div id="settingsTrigger" onclick="toggleSettingsMode()">⚙️</div>
 
   <div class="card hidden" id="setupCard">
-    <h2>🛠️ Settings Dashboard</h2>
+    <h2>Settings Dashboard</h2>
 
     <div class="edit-grid">
       <div class="edit-control">
         <label for="boardNameInput">Switch Board Name</label>
         <input type="text" id="boardNameInput" placeholder="My Awesome Board" oninput="updateBoardName()" />
+      </div>
+
+      <div class="edit-control">
+        <label for="themeSelect">Theme Color</label>
+        <select id="themeSelect" onchange="applySelectedTheme()">
+          <option value="White">White</option>
+          <option value="Black">Black</option>
+          <option value="Blue">Blue</option>
+          <option value="Dark Blue">Dark Blue</option>
+          <option value="Red">Red</option>
+          <option value="Dark Red">Dark Red</option>
+          <option value="Green">Green</option>
+          <option value="Dark Green">Dark Green</option>
+          <option value="Yellow">Yellow</option>
+          <option value="Dark Yellow">Dark Yellow</option>
+          <option value="Purple">Purple</option>
+          <option value="Dark Purple">Dark Purple</option>
+          <option value="Pink">Pink</option>
+          <option value="Dark Pink">Dark Pink</option>
+        </select>
       </div>
 
       <div class="edit-control" style="align-items: flex-start;">
@@ -223,7 +519,7 @@
 
     <div class="input-group">
       <div style="flex: 1;">
-        <label style="font-size: 0.85rem; font-weight: bold; color: #666; text-transform: uppercase; display: block; margin-bottom: 5px;">
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--muted-text); text-transform: uppercase; display: block; margin-bottom: 5px;">
           New Switch Name
         </label>
         <input type="text" id="switchName" placeholder="Name your toggle..." />
@@ -233,7 +529,7 @@
   </div>
 
   <div class="card hidden" id="boardCard">
-    <h2 id="boardTitle">🎛️ Your Switch Board</h2>
+    <h2 id="boardTitle">Your Switch Board</h2>
     <div id="switchContainer"></div>
 
     <div id="shareSection" class="hidden" style="margin-top: 25px;">
@@ -245,6 +541,7 @@
     let switches = [];
     let urlPassword = '';
     let boardName = 'Your Switch Board';
+    let selectedTheme = 'White';
     let isAdminAuthenticated = false;
 
     function escapeHtml(str = '') {
@@ -264,25 +561,35 @@
       const params = new URLSearchParams(window.location.search);
       const dataParam = params.get('s');
       const nameParam = params.get('n');
+      const themeParam = params.get('c');
       urlPassword = params.get('p') || '';
 
       if (nameParam) {
         boardName = decodeURIComponent(nameParam);
       }
 
+      if (themeParam) {
+        selectedTheme = decodeURIComponent(themeParam);
+      }
+
       document.getElementById('boardNameInput').value = nameParam ? boardName : '';
+      document.getElementById('themeSelect').value = selectedTheme;
+      applyTheme(selectedTheme);
       updateBoardNameDisplay();
 
       if (dataParam) {
         try {
-          switches = dataParam.split(',').map(item => {
-            const [name, state] = item.split(':');
-            if (!name) return null;
-            return {
-              name: decodeURIComponent(name),
-              state: state === '1'
-            };
-          }).filter(Boolean);
+          switches = dataParam
+            .split(',')
+            .map(item => {
+              const [name, state] = item.split(':');
+              if (!name) return null;
+              return {
+                name: decodeURIComponent(name),
+                state: state === '1'
+              };
+            })
+            .filter(Boolean);
           render();
         } catch (e) {
           console.error("Error parsing URL parameters", e);
@@ -290,6 +597,29 @@
       } else {
         render();
       }
+    }
+
+    function applyTheme(themeName) {
+      const validThemes = [
+        'White', 'Black', 'Blue', 'Dark Blue', 'Red', 'Dark Red',
+        'Green', 'Dark Green', 'Yellow', 'Dark Yellow',
+        'Purple', 'Dark Purple', 'Pink', 'Dark Pink'
+      ];
+
+      const safeTheme = validThemes.includes(themeName) ? themeName : 'White';
+      selectedTheme = safeTheme;
+      document.body.setAttribute('data-theme', safeTheme);
+      const themeSelect = document.getElementById('themeSelect');
+      if (themeSelect) {
+        themeSelect.value = safeTheme;
+      }
+    }
+
+    function applySelectedTheme() {
+      const themeSelect = document.getElementById('themeSelect');
+      const value = themeSelect ? themeSelect.value : 'White';
+      applyTheme(value);
+      updateURL();
     }
 
     function updateBoardName() {
@@ -300,13 +630,13 @@
     }
 
     function updateBoardNameDisplay() {
-      document.getElementById('boardTitle').innerText = `🎛️ ${boardName}`;
+      document.getElementById('boardTitle').innerText = boardName;
     }
 
     function updateURL() {
       const defaultBoardName = 'Your Switch Board';
 
-      if (switches.length === 0 && boardName === defaultBoardName) {
+      if (switches.length === 0 && boardName === defaultBoardName && selectedTheme === 'White') {
         const passString = urlPassword ? `?p=${encodeURIComponent(urlPassword)}` : '';
         window.history.replaceState({}, '', window.location.pathname + passString);
         document.getElementById('boardCard').classList.add('hidden');
@@ -326,6 +656,10 @@
 
       if (boardName !== defaultBoardName && boardName.trim() !== '') {
         queryParams.push(`n=${encodeURIComponent(boardName)}`);
+      }
+
+      if (selectedTheme !== 'White') {
+        queryParams.push(`c=${encodeURIComponent(selectedTheme)}`);
       }
 
       if (urlPassword) {
